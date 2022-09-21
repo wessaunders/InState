@@ -1,36 +1,36 @@
 using InState.Abstracts;
-using InState.Enums;
+using InState.Interfaces;
 
 namespace InState.Behaviors
 {
-    public class TransitionBehavior<T>
+    public class TransitionBehavior<TStateData, TTriggers>
     {
-        private State<T> originatingState;
+        private State<TStateData, TTriggers> originatingState;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="trigger">Identifies the trigger that will be associated with the transition</param>
-        /// <param name="originatingState">Indicates the originating state</param>
-        public TransitionBehavior(Triggers trigger, State<T> originatingState)
+        /// <param name="originatingState">Indicates the originating step</param>
+        public TransitionBehavior(TTriggers trigger, State<TStateData, TTriggers> originatingState)
         {
             this.originatingState = originatingState;
             TransitionTrigger = trigger;
         }
 
-        internal State<T>? PermittedTransition { get; private set; }
+        internal IState<TStateData, TTriggers>? PermittedTransition { get; private set; }
 
         /// <summary>
-        /// Define the state the current state can transition to
+        /// Define the step the current step can transition to
         /// </summary>
         /// <param name="stateToTransitionTo">Identifies the state that can be transitioned to</param>
         /// <returns>State<T></returns>
-        public State<T> TransitionTo(State<T> stateToTransitionTo)
+        public State<TStateData, TTriggers> TransitionTo(State<TStateData, TTriggers> stateToTransitionTo)
         {
             PermittedTransition = stateToTransitionTo;
             return originatingState;
         }
 
-        internal Triggers TransitionTrigger { get; private set; }
+        internal TTriggers TransitionTrigger { get; private set; }
     }
 }

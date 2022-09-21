@@ -1,4 +1,4 @@
-namespace InState.Enums
+namespace InState.Tests
 {
     public enum Triggers
     {
