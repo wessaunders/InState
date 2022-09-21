@@ -16,6 +16,12 @@ namespace InState.Abstracts
             PermittedTransitions = new List<TransitionBehavior<TStateData, TTriggers>>();
         }
 
+        /// <summary>
+        /// Identifies the current activity associated with the current transition
+        /// </summary>
+        /// <value>Activity<TStateData, TTriggers></value>
+        public Activity<TStateData, TTriggers> AssociatedActivity { get; internal set; }
+
         public List<TStateData> Data { get; set; }
 
         /// <summary>
