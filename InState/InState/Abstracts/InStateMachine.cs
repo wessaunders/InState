@@ -46,7 +46,7 @@ namespace InState.Abstracts
             {
                 if (currentState != null)
                 {
-                    List<TStateData> currentData = currentState.Data;
+                    IState<TStateData, TTriggers> originalState = currentState;
 
                     TransitionBehavior<TStateData, TTriggers> matchingTransitionBehavior = currentState
                         .PermittedTransitions
@@ -54,11 +54,18 @@ namespace InState.Abstracts
 
                     if (matchingTransitionBehavior != null)
                     {
-                        IState<TStateData, TTriggers> permittedTransition = matchingTransitionBehavior.PermittedTransition;
+                        State<TStateData, TTriggers> permittedTransition = matchingTransitionBehavior.PermittedTransition;
                         if (permittedTransition != null)
                         {
+                            if (matchingTransitionBehavior.AfterTransitionActivity != null)
+                            {
+                                permittedTransition.AssociatedActivity = matchingTransitionBehavior
+                                    .AfterTransitionActivity
+                                    .Activity;
+                            }
+
                             currentState = permittedTransition;
-                            currentState.Data = currentData;
+                            currentState.Data = originalState.Data;
                         }
                     }
                 }
@@ -67,23 +74,8 @@ namespace InState.Abstracts
                     currentState = States.First();
                 }
             }
-
+            
             return currentState;
-        }
-
-        /// <summary>
-        /// Transition to the state specified by the provided trigger from the current state and process the
-        /// new state activity with the provided data
-        /// </summary>
-        /// <param name="trigger">Indicates the trigger to use to determine the appropriate state to transition to</param>
-        /// <param name="data">Indicates the data to apply to the new state activity</param>
-        /// <returns>IState<TStateData, TTriggers></returns>
-        public IState<TStateData, TTriggers> Fire(TTriggers trigger, object data)
-        {
-            IState<TStateData, TTriggers> transitionedState = Fire(trigger);
-            transitionedState = transitionedState.Process(data);
-
-            return transitionedState;
         }
 
         /// <summary>
@@ -97,7 +89,12 @@ namespace InState.Abstracts
         public IState<TStateData, TTriggers> Fire<V>(TTriggers trigger, V data)
         {
             IState<TStateData, TTriggers> transitionedState = Fire(trigger);
-            transitionedState = transitionedState.Process(data);
+
+            if (transitionedState.AssociatedActivity != null)
+            {
+                Activity<TStateData, TTriggers> activity = transitionedState.AssociatedActivity;
+                transitionedState = activity.Execute(data);
+            }
 
             return transitionedState;
         }
@@ -115,22 +112,12 @@ namespace InState.Abstracts
         public IState<TStateData, TTriggers> Fire<V, Z>(TTriggers trigger, V firstDataItem, Z secondDataItem)
         {
             IState<TStateData, TTriggers> transitionedState = Fire(trigger);
-            transitionedState = transitionedState.Process(firstDataItem, secondDataItem);
 
-            return transitionedState;
-        }
-
-        /// <summary>
-        /// Transition to the state specified by the provided trigger from the current state and 
-        /// asynchronously process the new state activity with the provided data
-        /// </summary>
-        /// <param name="trigger">Indicates the trigger to use to determine the appropriate state to transition to</param>
-        /// <param name="data">Indicates the data to apply to the new state activity</param>
-        /// <returns>IState<TStateData, TTriggers></returns>
-        public async Task<IState<TStateData, TTriggers>> FireAsync(TTriggers trigger, object data)
-        {
-            IState<TStateData, TTriggers> transitionedState = Fire(trigger);
-            transitionedState = await Task.Run(() => transitionedState.Process(data));
+            if (transitionedState.AssociatedActivity != null)
+            {
+                Activity<TStateData, TTriggers> activity = transitionedState.AssociatedActivity;
+                transitionedState = activity.Execute(firstDataItem, secondDataItem);
+            }
 
             return transitionedState;
         }
@@ -146,7 +133,12 @@ namespace InState.Abstracts
         public async Task<IState<TStateData, TTriggers>> FireAsync<V>(TTriggers trigger, V data)
         {
             IState<TStateData, TTriggers> transitionedState = Fire(trigger);
-            transitionedState = await Task.Run(() => transitionedState.Process(data));
+            
+            if (transitionedState.AssociatedActivity != null)
+            {
+                Activity<TStateData, TTriggers> activity = transitionedState.AssociatedActivity;
+                transitionedState = await Task.Run(() => activity.Execute(data));
+            }
 
             return transitionedState;
         }
@@ -164,7 +156,12 @@ namespace InState.Abstracts
         public async Task<IState<TStateData, TTriggers>> FireAsync<V, Z>(TTriggers trigger, V firstDataItem, Z secondDataItem)
         {
             IState<TStateData, TTriggers> transitionedState = Fire(trigger);
-            transitionedState = await Task.Run(() => transitionedState.Process(firstDataItem, secondDataItem));
+
+            if (transitionedState.AssociatedActivity != null)
+            {
+                Activity<TStateData, TTriggers> activity = transitionedState.AssociatedActivity;
+                transitionedState = await Task.Run(() => activity.Execute(firstDataItem, secondDataItem));
+            }
 
             return transitionedState;
         }

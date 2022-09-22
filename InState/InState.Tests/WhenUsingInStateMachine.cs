@@ -8,6 +8,7 @@ namespace InState.Tests;
 [TestClass]
 public class WhenUsingInStateMachine
 {
+    private Activity<string, Triggers> finishActivity;
     private State<string, Triggers> finishState;
     private InStateMachine<string, Triggers> machine;
     private State<string, Triggers> startState;
@@ -16,22 +17,31 @@ public class WhenUsingInStateMachine
     public void Initialize()
     {
         Mock<State<string, Triggers>> mockStartState = new Mock<State<string, Triggers>>();
+        mockStartState.Setup(s => s.Name)
+            .Returns("Start");
+
         Mock<State<string, Triggers>> mockFinishState = new Mock<State<string, Triggers>>();
-        mockFinishState.Setup(s => s.Process(It.IsAny<object>()))
-            .Returns((string d) => {
+        mockFinishState.Setup(s => s.Name)
+            .Returns("Finish");     
+
+        startState = mockStartState.Object;
+        finishState = mockFinishState.Object;
+
+        Mock<Activity<string, Triggers>> mockFinishActivity = new Mock<Activity<string, Triggers>>(finishState);
+        mockFinishActivity.Setup(s => s.Execute(It.IsAny<object>()))
+            .Returns((string d) =>
+            {
                 mockFinishState.Object.Data.Add(d);
                 return mockFinishState.Object;
             });
-        mockFinishState.Setup(s => s.Process(It.IsAny<object>(), It.IsAny<object>()))
+        mockFinishActivity.Setup(s => s.Execute(It.IsAny<object>(), It.IsAny<object>()))
             .Returns((string d, string e) =>
             {
                 mockFinishState.Object.Data.Add(d);
                 mockFinishState.Object.Data.Add(e);
                 return mockFinishState.Object;
-            });        
-
-        startState = mockStartState.Object;
-        finishState = mockFinishState.Object;
+            });
+        finishActivity = mockFinishActivity.Object;
 
         startState.Data.Add("math");
         startState.Data.Add("geography");
@@ -49,7 +59,8 @@ public class WhenUsingInStateMachine
 
         startState
             .When(Triggers.Finish)
-            .TransitionTo(finishState);
+                .TransitionTo(finishState)
+                    .Then(finishActivity);    
     }
 
     [TestMethod]
@@ -71,6 +82,7 @@ public class WhenUsingInStateMachine
 
         IState<string, Triggers> currentState = machine.CurrentState;
         Assert.IsNotNull(currentState);
+        Assert.IsNotNull(currentState.AssociatedActivity);
         Assert.AreEqual(finishState, currentState);
         Assert.AreEqual(3, currentState.Data.Count());
     }
@@ -83,7 +95,7 @@ public class WhenUsingInStateMachine
 
         startState
             .When(Triggers.Finish)
-            .TransitionTo(finishState);
+                .TransitionTo(finishState);
 
         IState<string, Triggers> currentState = machine.Fire(Triggers.Start);
         Assert.IsNotNull(currentState);
@@ -159,7 +171,7 @@ public class WhenUsingInStateMachine
     {
         InitializeStates();
 
-        machine.Fire(Triggers.Finish, null);
+        machine.Fire<string>(Triggers.Finish, null);
 
         IState<string, Triggers> currentState = machine.CurrentState;
         Assert.IsNotNull(currentState);

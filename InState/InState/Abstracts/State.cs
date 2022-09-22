@@ -16,6 +16,12 @@ namespace InState.Abstracts
             PermittedTransitions = new List<TransitionBehavior<TStateData, TTriggers>>();
         }
 
+        /// <summary>
+        /// Identifies the current activity associated with the current transition
+        /// </summary>
+        /// <value>Activity<TStateData, TTriggers></value>
+        public Activity<TStateData, TTriggers> AssociatedActivity { get; internal set; }
+
         public List<TStateData> Data { get; set; }
 
         /// <summary>
@@ -26,41 +32,9 @@ namespace InState.Abstracts
 
         public IList<TransitionBehavior<TStateData, TTriggers>> PermittedTransitions { get; private set; }
 
-        /// <summary>
-        /// Process the provided state data
-        /// </summary>
-        /// <returns>TIState<TStateData, TTriggers></returns>
-        public virtual IState<TStateData, TTriggers> Process()
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Process the provided state data
-        /// </summary>
-        /// <param name="stateData">Indicates the state-specific data to process</param>
-        /// <returns>IState<TStateData, TTriggers></returns>
-        public virtual IState<TStateData, TTriggers> Process(object stateData)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Process the provided state data
-        /// </summary>
-        /// <param name="firstDataItem">Indicates the first state-specific data item to process<</param>
-        /// <param name="secondDataItem">Indicates the second state-specific data item to process</param>
-        /// <returns>IState<TStateData, TTriggers></returns>
-        public virtual IState<TStateData, TTriggers> Process(object firstDataItem, object secondDataItem)
-        {
-            return null;
-        }
-
         public TransitionBehavior<TStateData, TTriggers> When(TTriggers trigger)
         {
             TransitionBehavior<TStateData, TTriggers> transitionBehavior = new TransitionBehavior<TStateData, TTriggers>(trigger, this);
-            PermittedTransitions.Add(transitionBehavior);
-
             return transitionBehavior;
         }
     }
