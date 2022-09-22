@@ -6,8 +6,7 @@ namespace InState.Behaviors
 {
     public class TransitionBehavior<TStateData, TTriggers>
     {
-        private Activity<TStateData, TTriggers> activity;
-        private State<TStateData, TTriggers> originatingState;
+        //private State<TStateData, TTriggers> originatingState;
 
         /// <summary>
         /// Default constructor
@@ -16,12 +15,15 @@ namespace InState.Behaviors
         /// <param name="originatingState">Indicates the originating state</param>
         public TransitionBehavior(TTriggers trigger, State<TStateData, TTriggers> originatingState)
         {
-            this.originatingState = originatingState;
+            OriginatingState = originatingState;
             TransitionTrigger = trigger;
+
+            OriginatingState.PermittedTransitions.Add(this);
         }
 
         internal ActivityBehavior<TStateData, TTriggers> AfterTransitionActivity { get; set; }
 
+        public State<TStateData, TTriggers> OriginatingState { get; private set; }
 
         /// <summary>
         /// Defines which transition is permitted from the specified state and trigger
@@ -36,10 +38,15 @@ namespace InState.Behaviors
         /// <returns>ActivityBehavior<TStateData, TTriggers></returns>
         public ActivityBehavior<TStateData, TTriggers> TransitionTo(State<TStateData, TTriggers> stateToTransitionTo)
         {
-            ActivityBehavior<TStateData, TTriggers> activityBehavior = new ActivityBehavior<TStateData, TTriggers>(stateToTransitionTo, this);
-            AfterTransitionActivity = activityBehavior;
+            ActivityBehavior<TStateData, TTriggers> activityBehavior = null;
+            
+            if (stateToTransitionTo != null)
+            {
+                activityBehavior = new ActivityBehavior<TStateData, TTriggers>(OriginatingState, stateToTransitionTo);
+                AfterTransitionActivity = activityBehavior;
 
-            PermittedTransition = stateToTransitionTo;
+                PermittedTransition = stateToTransitionTo;
+            }
 
             return activityBehavior;
         }

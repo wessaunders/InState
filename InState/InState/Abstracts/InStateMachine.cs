@@ -54,14 +54,16 @@ namespace InState.Abstracts
 
                     if (matchingTransitionBehavior != null)
                     {
-                        Activity<TStateData, TTriggers> afterTransitionActivity = matchingTransitionBehavior
-                            .AfterTransitionActivity
-                            .Activity;
-
                         State<TStateData, TTriggers> permittedTransition = matchingTransitionBehavior.PermittedTransition;
                         if (permittedTransition != null)
                         {
-                            permittedTransition.AssociatedActivity = afterTransitionActivity;
+                            if (matchingTransitionBehavior.AfterTransitionActivity != null)
+                            {
+                                permittedTransition.AssociatedActivity = matchingTransitionBehavior
+                                    .AfterTransitionActivity
+                                    .Activity;
+                            }
+
                             currentState = permittedTransition;
                             currentState.Data = originalState.Data;
                         }
