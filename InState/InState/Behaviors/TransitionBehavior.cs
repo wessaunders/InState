@@ -4,10 +4,13 @@ using InState.Interfaces;
 
 namespace InState.Behaviors
 {
+    /// <summary>
+    /// Describes the behavior that will occur when a transition is triggered
+    /// </summary>
+    /// <typeparam name="TStateData">Type of data that will be stored in the state</typeparam>
+    /// <typeparam name="TTriggers">Type of triggers that will be used to signal state transitions</typeparam>
     public class TransitionBehavior<TStateData, TTriggers>
     {
-        //private State<TStateData, TTriggers> originatingState;
-
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -21,8 +24,16 @@ namespace InState.Behaviors
             OriginatingState.PermittedTransitions.Add(this);
         }
 
+        /// <summary>
+        /// Identifies the activity that will occur after a transition has completed
+        /// </summary>
+        /// <value>ActivityBehavior<TStateData, TTriggers></value>
         internal ActivityBehavior<TStateData, TTriggers> AfterTransitionActivity { get; set; }
 
+        /// <summary>
+        /// Identifies the originating state that the transition was triggered from
+        /// </summary>
+        /// <value>State<TStateData, TTriggers></value>
         public State<TStateData, TTriggers> OriginatingState { get; private set; }
 
         /// <summary>
@@ -51,6 +62,10 @@ namespace InState.Behaviors
             return activityBehavior;
         }
 
+        /// <summary>
+        /// Identifies the trigger that will trigger the transition
+        /// </summary>
+        /// <value>TTriggers</value>
         internal TTriggers TransitionTrigger { get; private set; }
     }
 }
