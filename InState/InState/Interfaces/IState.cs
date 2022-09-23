@@ -4,6 +4,11 @@ using InState.Behaviors;
 
 namespace InState.Interfaces
 {
+    /// <summary>
+    /// Describes the interface that all states must conform to
+    /// </summary>
+    /// <typeparam name="TStateData">Type of data that will be stored in the state</typeparam>
+    /// <typeparam name="TTriggers">Type of triggers that will be used to signal state transitions</typeparam>
     public interface IState<TStateData, TTriggers>
     {
         /// <summary>

@@ -1,7 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <PackageId>InState</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Wes Saunders</Authors>
+    <Company>InState</Company>
+    <PackageDescription>InState is a state machine that uses fluent definitions to define the behaviors and relationships between states</PackageDescription>
+    <RepositoryUrl>https://github.com/wessaunders/InState</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
