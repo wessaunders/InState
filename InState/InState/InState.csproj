@@ -2,7 +2,6 @@
 
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>InState</PackageId>
     <Version>0.1.0</Version>
