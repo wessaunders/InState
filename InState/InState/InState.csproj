@@ -4,7 +4,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>InState</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Wes Saunders</Authors>
     <Company>InState</Company>
     <PackageDescription>InState is a state machine that uses fluent definitions to define the behaviors and relationships between states</PackageDescription>
