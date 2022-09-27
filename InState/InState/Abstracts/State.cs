@@ -33,7 +33,7 @@ namespace InState.Abstracts
         public List<TStateData> Data { get; set; }
 
         /// <summary>
-        /// Indicates the name of the step
+        /// Indicates the name of the state
         /// </summary>
         /// <value>string</value>
         public abstract string Name { get; }

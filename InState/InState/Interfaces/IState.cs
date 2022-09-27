@@ -25,6 +25,12 @@ namespace InState.Interfaces
         List<TStateData> Data { get; set; }
 
         /// <summary>
+        /// Indicates the name of the state
+        /// </summary>
+        /// <value>string</value>
+        string Name { get; }
+
+        /// <summary>
         /// Indicates the transitions that are permitted from the current state
         /// </summary>
         /// <value>IList<TransitionBehavior<TStateData, TTriggers>></value>
